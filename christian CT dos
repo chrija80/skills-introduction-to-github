@@ -1,1 +1,40 @@
+import math
+
+def beräkna_personaldos(CTDIvol_mGy, avstånd_m, skydd='inget'):
+    """
+    Beräknar uppskattad stråldos till personal under en CT-skanning.
+    
+    Parametrar:
+    - CTDIvol_mGy: CTDIvol i mGy
+    - avstånd_m: avstånd i meter mellan personal och patient
+    - skydd: 'inget', 'blyförkläde' eller 'vägg/skärm'
+    
+    Returnerar:
+    - Uppskattad dos i mikroSievert (µSv)
+    """
+    
+    # Empirisk konstant baserad på spridd strålning kring patient (literaturvärde)
+    spridd_dos_per_mGyvid1m = 5.0  # µSv per mGy vid 1 m avstånd (typvärde)
+
+    # 1/r^2-avståndsminskning
+    dos_utan_skydd = spridd_dos_per_mGyvid1m * CTDIvol_mGy / (avstånd_m ** 2)
+
+    # Skyddsfaktor (typvärden)
+    skyddsfaktor = {
+        'inget': 1.0,
+        'blyförkläde': 0.05,    # 95% dämpning
+        'vägg/skärm': 0.01      # 99% dämpning
+    }
+
+    dos_med_skydd = dos_utan_skydd * skyddsfaktor.get(skydd, 1.0)
+    
+    return dos_med_skydd
+
+# Exempel
+CTDIvol = 10  # mGy
+avstånd = 1.5  # meter
+skydd = 'blyförkläde'
+
+dos = beräkna_personaldos(CTDIvol, avstånd, skydd)
+print(f"Uppskattad personaldos: {dos:.2f} µSv")
 
